@@ -1,12 +1,15 @@
 import tweepy
+import os
 
-CONSUMER_KEY = ""
-CONSUMER_SECRET = ""
-ACCESS_KEY = ""
-ACCESS_SECRET = ""
+API_KEY = os.environ.get("TWITTER_API_KEY")
+API_SECRET = os.environ.get("TWITTER_API_SECRET_KEY")
+BEARER_TOKEN = os.environ.get("BEARER_TOKEN")
+ACCESS_KEY = os.environ.get("TWITTER_ACCESS_TOKEN")
+ACCESS_SECRET = os.environ.get("TWITTER_ACCESS_TOKEN_SECRET")
 
-auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET);
-auth.set_access_token(CONSUMER_KEY, CONSUMER_SECRET)
+
+auth = tweepy.OAuthHandler(API_KEY, API_SECRET)
+auth.set_access_token(API_KEY, API_SECRET)
 api = tweepy.API(auth)
 
-print("hellow world")
+print(BEARER_TOKEN)
