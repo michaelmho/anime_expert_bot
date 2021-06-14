@@ -1,25 +1,11 @@
-import json
 import tweepy
+from red_tape import red_tape
 from genre_finder import genre_finder
 from last_seen import get_last_seen_id, set_last_seen_id
 
 
 def main():
-    # open and read file
-    cred_file = open("credentials.json", "r")
-    cred = cred_file.read()
-    FILENAME = "last_seen.txt"
-
-    # parse
-    credentials = json.loads(cred)
-
-    # Getting credentials from credentials.json
-
-    auth = tweepy.OAuthHandler(
-        credentials["API_KEY"], credentials["API_SECRET"])
-    auth.set_access_token(
-        credentials["ACCESS_KEY"], credentials["ACCESS_SECRET"])
-    api = tweepy.API(auth)
+    api, FILENAME = red_tape()
 
     # prints mentions as an array
 
@@ -32,13 +18,14 @@ def main():
         set_last_seen_id(last_seen_id, FILENAME)
 
         if(len(tweet_text) > 13):
-            # TODO: fix this, all this does is check if there is more text after the mention
-            switch_genre("Action", tweet_text)
+            # TODO:: fix this, all this does is check if there is more text after the mention and sends the whole tweet
+            switch_genre(tweet_text, mention)
 
 
-def switch_genre(genre, tweet_text):
+def switch_genre(genre, mention):
+    # this will most likely go in another file, but it is convenient to leave here for now
     switcher = {
-        genre: genre_finder(tweet_text),
+        genre: genre_finder(genre, mention),
     }
 
     return switcher.get(genre, "empty")
