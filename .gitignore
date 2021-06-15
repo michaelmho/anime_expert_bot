@@ -1,2 +1,6 @@
 credentials.json
 last_seen.txt
+.vscode
+__pycache__
+tempCodeRunnerFile
+token.json
