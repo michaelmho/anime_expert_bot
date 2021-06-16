@@ -3,4 +3,4 @@ last_seen.txt
 .vscode/*
 __pycache__
 tempCodeRunnerFile.py
-token.json
+mal_tokens.json
