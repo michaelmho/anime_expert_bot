@@ -4,9 +4,9 @@ import tweepy
 
 def red_tape():
     # open and read file
-    cred_file = open("credentials.json", "r")
+    cred_file = open("./text_files/credentials.json", "r")
     cred = cred_file.read()
-    FILENAME = "last_seen.txt"
+    FILENAME = "./text_files/last_seen.txt"
 
     # parse
     credentials = json.loads(cred)

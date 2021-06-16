@@ -1,6 +1,6 @@
 import json
 
-FILENAME = 'last_seen.txt'
+FILENAME = './text_files/last_seen.txt'
 
 
 def get_last_seen_id(FILENAME):
