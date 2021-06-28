@@ -35,6 +35,7 @@ def main():
     log.info('----------------')
     log.info('Polling mentions')
     mentions = api.mentions_timeline(last_seen_id)
+    print(mentions)
     log.info(f'Found {len(mentions)} new mentions')
     
     for mention in reversed(mentions):
