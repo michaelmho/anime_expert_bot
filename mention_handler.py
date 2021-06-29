@@ -45,7 +45,7 @@ def parse_mention(mention):
     
     # Constructs query params for mal api request
     get_genre_query_param = lambda genre : f'&genre={genres[mal_api_request_params["media_type"]][genre]}'
-    get_status_query_param = lambda media_type : f'&staus={media_statuses[mal_api_request_params["media_type"]]}'
+    get_status_query_param = lambda : f'&staus={media_statuses[mal_api_request_params["media_type"]]}'
 
     # Control varibles for each argument type
     max_genres = 4
@@ -61,7 +61,7 @@ def parse_mention(mention):
     except ValueError:
         try:
             arguments.remove('anime')
-            media_type_found
+            media_type_found = True
         except:
             pass
 
@@ -77,7 +77,7 @@ def parse_mention(mention):
                 break
         
         if is_valid_argument:
-            # If this vargument is a genre
+            # If this argument is a genre
             if validator == arg_is_genre:
                 genres_found += 1
 
@@ -90,7 +90,10 @@ def parse_mention(mention):
                     mal_api_request_params['genre_query_param'] = get_genre_query_param(argument)
                 # Else, add this genre id to genre_query_param 
                 else:
-                    mal_api_request_params['genre_query_param'] += f',{genres[mal_api_request_params["media_type"]][argument]}'
+                    if not(argument in mal_api_request_params['genre_query_param']):
+                        mal_api_request_params['genre_query_param'] += f',{genres[mal_api_request_params["media_type"]][argument]}'
+                    else:
+                        genres_found-=1
             # If this argument is current
             elif validator == arg_is_current:
                 # If current has already been found
@@ -98,7 +101,7 @@ def parse_mention(mention):
                     message = f'Found more than one "current"'
                     break
                 else:
-                    mal_api_request_params['status_query_param'] = get_status_query_param(argument)
+                    mal_api_request_params['status_query_param'] = get_status_query_param()
                     current_found = True
             # If this argument is a media type
             else:
@@ -123,9 +126,10 @@ def parse_mention(mention):
 
         arg_index += 1
 
-    if len(arguments) > 0:
-        mal_api_request_params['genre_query_param'] = ''
-        mal_api_request_params['status_query_param'] = ''        
+    
+    # if len(arguments) > 0:
+    #     mal_api_request_params['genre_query_param'] = ''
+    #     mal_api_request_params['status_query_param'] = ''        
 
     return message, mal_api_request_params
 
@@ -249,4 +253,4 @@ media_statuses = {
     'manga': 'publishing'
 }
 
-#print(parse_mention('@ 1'))
+#parse_mention('@AnimeExpertBot sci-fi comedy hentai action adventure')

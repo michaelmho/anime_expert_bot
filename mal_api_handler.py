@@ -29,10 +29,10 @@ def mal_api_request(params):
     else:
         log.info(f'Received status code {response.status_code} from {url}')
 
-        # Index of the returned media we will select
-        media_index = randrange(limit)
         # Array of all media returned
         returned_media = response_data['results']
+        # Index of the returned media we will select
+        media_index = randrange(len(returned_media))
 
         if len(returned_media) == 0:
             log.info(f'No media returened from {url}')
@@ -56,7 +56,7 @@ def mal_api_request(params):
                 
                 # File path for media picture
                 current_timestamp = int(time.time())
-                image_file_path = f'./images/{selected_media["mal_id"]}_{current_timestamp}.jpg'
+                image_file_path = f'./images/{selected_media["mal_id"]}_{current_timestamp}.png'
 
                 try:
                     # Open the picture file, and save the picture of the selected media
@@ -66,13 +66,13 @@ def mal_api_request(params):
                     
                     # Open image file and then resize and enhance using PIL 
                     image_file = Image.open(image_file_path)
-                    resized_im = image_file.resize((round(image_file.size[0]*0.90), round(image_file.size[1]*0.90)))
+                    resized_im = image_file.resize((round(image_file.size[0]*0.75), round(image_file.size[1]*0.75)))
 
                     enhancer = ImageEnhance.Sharpness(resized_im)
 
                     factor = 2
                     im_s_1 = enhancer.enhance(factor)
-                    im_s_1.save(image_file_path)
+                    im_s_1.save(image_file_path, quality=100)
                     image_file.close()
 
                     # Add the selected media's info to the final result
@@ -90,9 +90,4 @@ def mal_api_request(params):
           
     return result
 
-mal_api_request({
-    'genre_query_param' : '',
-    'status_query_param' : '',
-    'media_type' : 'anime'
-    })
 #mal_api_request({'media_type' : 'anime','status_query_param' : '','genre_query_param' : ''}, {'title' : '','plot' : '','image_file_path' : ''})

@@ -1,15 +1,16 @@
-import json
-
 FILENAME = './text_files/last_seen.txt'
 
 
 def get_last_seen_id(FILENAME):
-    f_read = open(FILENAME, "r")
     try:
+        f_read = open(FILENAME, "r")
         last_seen_id = int(f_read.read().strip())
         f_read.close()
     except ValueError:
         f_read.close()
+        last_seen_id = 111111111
+        set_last_seen_id(last_seen_id, FILENAME)
+    except FileNotFoundError:
         last_seen_id = 111111111
         set_last_seen_id(last_seen_id, FILENAME)
     
