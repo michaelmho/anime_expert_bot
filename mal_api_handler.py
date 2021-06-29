@@ -5,6 +5,7 @@ import logging
 import urllib.request
 from random import randrange
 from urllib.error import HTTPError
+from PIL import Image, ImageEnhance
 
 log = logging.getLogger(__name__)
 
@@ -62,6 +63,17 @@ def mal_api_request(params):
                     image_file = open(image_file_path, 'w')
                     urllib.request.urlretrieve(picture_urls[picture_index]["large"], image_file_path)
                     image_file.close()
+                    
+                    # Open image file and then resize and enhance using PIL 
+                    image_file = Image.open(image_file_path)
+                    resized_im = image_file.resize((round(image_file.size[0]*0.90), round(image_file.size[1]*0.90)))
+
+                    enhancer = ImageEnhance.Sharpness(resized_im)
+
+                    factor = 2
+                    im_s_1 = enhancer.enhance(factor)
+                    im_s_1.save(image_file_path)
+                    image_file.close()
 
                     # Add the selected media's info to the final result
                     result['title'] = selected_media['title']
@@ -78,4 +90,9 @@ def mal_api_request(params):
           
     return result
 
+mal_api_request({
+    'genre_query_param' : '',
+    'status_query_param' : '',
+    'media_type' : 'anime'
+    })
 #mal_api_request({'media_type' : 'anime','status_query_param' : '','genre_query_param' : ''}, {'title' : '','plot' : '','image_file_path' : ''})
