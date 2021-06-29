@@ -25,15 +25,16 @@ def parse_mention(mention):
 
     # Create arguments array from mention text
     arguments = mention.lower().strip().split(' ')
-    if len(arguments) == 1:
-        message = 'Missing argument(s)'
-        return message, mal_api_request_params
     # Remove '@AnimeExperBot' from the arguments
     del arguments[0]
     # Remove any characters that are not a-z or '-' from each argument
     arguments = list(map(lambda arg : re.sub('[^a-z-]', '', arg), arguments))
     # Remove any arguments that are now ''
     arguments = [arg for arg in arguments if arg != '']
+    
+    if len(arguments) == 0:
+        message = 'Missing argument(s)'
+        return message, mal_api_request_params
 
     # Validator for each argument type
     arg_is_genre = lambda arg : True if arg in genres[mal_api_request_params['media_type']].keys() else False
@@ -127,6 +128,25 @@ def parse_mention(mention):
         mal_api_request_params['status_query_param'] = ''        
 
     return message, mal_api_request_params
+
+
+def get_reply_text(message, media_info):
+    if message == '':
+        message_text = ''
+    else:
+        message_text = f'There\'s a problem with your request: {message}\nBut maybe you\'ll like this\n'
+
+    media_info_text = 'Sorry, I encountered a problem while getting your suggestion'
+    if len(media_info['title']) > 0:
+        if len(media_info['plot']) > 0:
+            if len(media_info['image_file_path']) > 0:
+                media_info_text = f'Title: {media_info["title"]}\nPlot: {media_info["plot"]}'
+    
+    reply_text = message_text + media_info_text
+    if len(reply_text) > 280:
+        reply_text = reply_text[0:277] + '...'
+    
+    return reply_text
 
 
 log = logging.getLogger(__name__)
@@ -229,4 +249,4 @@ media_statuses = {
     'manga': 'publishing'
 }
 
-#print(parse_mention('@ action adventure hentai anime'))
+#print(parse_mention('@ 1'))

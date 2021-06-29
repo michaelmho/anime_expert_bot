@@ -3,8 +3,8 @@ import os
 import logging
 import logging.handlers as handlers
 from last_seen import get_last_seen_id, set_last_seen_id
-from mention_handler import parse_mention
-from twitter_api_handler import get_twitter_api, get_reply_text, reply_to_tweet
+from mention_handler import parse_mention, get_reply_text
+from twitter_api_handler import get_twitter_api, reply_to_tweet
 from mal_api_handler import mal_api_request
 
 rfh = logging.handlers.RotatingFileHandler(
@@ -54,7 +54,7 @@ def main():
         reply_text = get_reply_text(message, media_info)
         log.info(f'Replying to tweet with "{reply_text}"')
         reply_to_tweet(twitter_api, media_info['image_file_path'], reply_text, mention._json['id'])
-        
+
         # Delete anime cover photo
         os.remove(media_info['image_file_path'])
         
