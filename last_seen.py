@@ -1,6 +1,3 @@
-FILENAME = './text_files/last_seen.txt'
-
-
 def get_last_seen_id(FILENAME):
     try:
         f_read = open(FILENAME, "r")
