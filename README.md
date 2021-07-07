@@ -10,7 +10,7 @@ Anime_Expert_Bot is a twitter bot created to tweet anime and manga suggestions t
 ## Technologies
 * Python version: 3.8.5
 * Python modules
-    * PIP
+    * Pillow
     * Tweepy
 * [Jikan Unoffical MyAnimeList API](https://jikan.docs.apiary.io/#)
 
@@ -20,7 +20,7 @@ manga like <media_name>
 Argument | Required | Description | Value | Position
 :------------ | :------------ | :------------ | :------------ | :------------
 manga | N | Makes it so the suggestion returned will be for manga rather than anime | 'manga' | First
-like | Y | This request will be for media similar to the media_name argument | 'like' | If argument 'manga' is used: Secondelse: First
+like | Y | This request will be for media similar to the media_name argument | 'like' | If argument 'manga' is used: Second, else: First
 media_name | Y | Name of media to find similar titles to | Any anime/manga name. Ex: 'Attack on titan' | Last
 
 current <genre> manga
