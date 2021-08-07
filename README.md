@@ -1,7 +1,7 @@
 ## Table of contents
 * [Purpose](#Purpose)
-* [Commands](#Commands)
 * [Technologies](#Technologies)
+* [Commands](#Commands)
 * [Genres](#Genres)
 * [Setup](#Setup)
 ## Purpose
@@ -23,10 +23,11 @@ manga | N | Makes it so the suggestion returned will be for manga rather than an
 like | Y | This request will be for media similar to the media_name argument | 'like' | If argument 'manga' is used: Second, else: First
 media_name | Y | Name of media to find similar titles to | Any anime/manga name. Ex: 'Attack on titan' | Last
 
-current <genre> manga
+(current | classic) <genre> manga
 Argument | Required | Description | Value | Position
 :------------ | :------------ | :------------ | :------------ | :------------
-current | N | Makes it so the suggestion returned will be currently airing/publishing | 'current' | Any
+current | N | Makes it so the suggestion returned will be currently airing/publishing media | 'current' | Any
+classic | N | Makes it so the suggestion returned will be for media media intially released between 1988 and 1998 | 'classic' | Any
 genre | Y | 1 to 4 genre names for the suggestion to match | [Any genre](#Genres) | Any
 manga | N | Makes it so the suggestion returned will befor manga rather than anime | 'manga' | Any
 
@@ -124,8 +125,10 @@ manga | N | Makes it so the suggestion returned will befor manga rather than ani
 * thriller
 
 ## Setup
-Install the [python modules](#Technologies) using pip
-Within the text_files folder create a file called 'credentials.json' and copy the contents below into the file
+* Create a twitter developer account...
+* Clone this repository
+* Install the [python modules](#Technologies) using pip
+* Within the text_files folder create a file called 'credentials.json' and copy the contents below into the file
 ```
 {
         "API_KEY": "",
@@ -135,4 +138,4 @@ Within the text_files folder create a file called 'credentials.json' and copy th
         "CLIENT_ID": ""
 }
 ```
-The value for each key can be found in your twitter developer account
+* Find the api key in your twitter developer account...

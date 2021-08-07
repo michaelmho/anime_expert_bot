@@ -12,7 +12,6 @@ def get_twitter_api():
     credentials = json.loads(cred)
 
     # Getting credentials from credentials.json
-
     auth = tweepy.OAuthHandler(
         credentials['API_KEY'], credentials['API_SECRET'])
     auth.set_access_token(
@@ -37,13 +36,15 @@ def delete_all_tweets(api):
     for status in tweepy.Cursor(api.user_timeline).items():
         try:
             api.destroy_status(status.id)
-            print('Deleted:', status.id)
+            LOG.info(f'Deleted: {status.id}')
         except Exception:
-            print('Failed to delete:', status.id)
+            LOG.error(f'Failed to delete: {status.id}')
 
 
 def post_test_tweets(api):
     tweets = [
+        '@AnimeExpertBot current classic',
+        '@AnimeExpertBot classic current',
         '@AnimeExpertBot current manga',
         '@AnimeExpertBot adventure action',
         '@AnimeExpertBot action action',
@@ -57,6 +58,10 @@ def post_test_tweets(api):
     ]
 
     for tweet in tweets:
-        api.update_status(tweet)
+        try:
+            api.update_status(tweet)
+            LOG.info(f'Tweeted: {tweet}')
+        except Exception:
+            LOG.error(f'Failed to tweet: {tweet}')
 
     

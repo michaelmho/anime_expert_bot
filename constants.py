@@ -100,4 +100,3 @@ MEDIA_STATUSES = {
     'anime': 'airing',
     'manga': 'publishing'
 }
-

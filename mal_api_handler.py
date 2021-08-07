@@ -10,8 +10,8 @@ from constants import MEDIA_STATUSES, LOG
 
 def mal_request_media(params):
     result = {
-        'title' : '',
         'plot' : '',
+        'title' : '',
         'image_file_path' : ''
     }
 
@@ -26,7 +26,7 @@ def mal_request_media(params):
         # Search for the top {limit} media with the requested genre(s)
         limit = 50
         genre = f'&genre={params["genre_ids"]}' if params['genre_ids'] else ''
-        status = f'&staus={MEDIA_STATUSES[params["media_type"]]}' if params['is_current'] else ''
+        status = f'&status={MEDIA_STATUSES[params["media_type"]]}' if params['is_current'] else ''
         start_end = f'&start_date=1988-00-00&end_date=1998-00-00' if params['is_classic'] else ''
         url = base_url + f'{status}{genre}{start_end}&limit={limit}&order_by=score'
 
@@ -152,6 +152,3 @@ def mal_request_media(params):
         LOG.error(f'Received status code {err.code} from "{selected_media["image_url"]}"')
 
     return result
-
-
-#print(mal_request_media({'media_type' : 'anime','is_current' : False,'genre_ids' : '4','query' : ''}))

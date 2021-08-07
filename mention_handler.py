@@ -4,11 +4,14 @@ from constants import GENRES, MEDIA_STATUSES
 
 def parse_mention(mention):
     # Parameters
+    #    Classic
+    #        Not required
+    #        Indicates that only media started between 1988 and 1998 should be returned
     #    Current
     #        Not required
-    #        Indicates that only currently running series should be suggested
+    #        Indicates that only currently running media should be suggested
     #    Genre
-    #        Not Required
+    #        Required
     #        Genre of media to be returned, see Genre class for possible values
     #    media_type
     #        Not Required
@@ -56,8 +59,6 @@ def parse_mention(mention):
     # Used to track which arguments have already been found
     max_genres = 4
     genres_found = 0
-    current_found = False
-    classic_found = False
     media_type_found = False
 
     # Try to find a media type and remove it from the arguments
@@ -103,27 +104,24 @@ def parse_mention(mention):
                         genres_found-=1
             # If this argument is current
             elif arg_is_x == arg_is_current:
-                # If current has already been found
-                if not current_found:
+                # If current has NOT been found AND classic has NOT been found
+                if (not mal_request_params['is_current']) and (not mal_request_params['is_classic']):
                     mal_request_params['is_current'] = True
-                    current_found = True
-
+            # If this argument is classic
             elif arg_is_x == arg_is_classic:
-                if not classic_found:
+                # If classic has NOT been found AND current has NOT been found
+                if (not mal_request_params['is_classic']) and (not mal_request_params['is_current']):
                     mal_request_params['is_classic'] = True
-                    classic_found = True
             # If this argument is a media type
             else:
                 # If a media type has already been found
                 if media_type_found:
-                    media_type = mal_request_params['media_type']
-                    if media_type == argument:
-                        help_message = f'Found more than one "{media_type}"'
-                    else:
+                    # If this argument does not match the previously found media type
+                    if not (argument == mal_request_params['media_type']):
                         help_message = 'Found both "manga" and "anime"'
-                    break
+                        break
                 else:
-                    mal_request_params["media_type"] = argument
+                    mal_request_params['media_type'] = argument
                     media_type_found = True
             
             # Remove this argument from the array
@@ -141,8 +139,8 @@ def parse_mention(mention):
 
 
 def parse_mention_with_like(arguments):
-    help_message = ''
     query = ''
+    help_message = ''
     media_type = 'anime'
     
     if arguments[0] == 'like':
@@ -160,7 +158,7 @@ def parse_mention_with_like(arguments):
         else:
             help_message = f'Command "{arguments[0]} {arguments[1]}" is not recognized'
     else:
-        help_message = '"like" or "manga like" can only be used at the beginning of a request'
+        help_message = '"like" or "manga like" can only be used at the beginning of a request'            
 
     return help_message, query, media_type
 
@@ -171,18 +169,13 @@ def get_reply_text(help_message, media_info):
     else:
         help_message_text = ''
 
-    media_info_text = 'Sorry, I encountered a problem while getting your suggestion'
     if media_info['title'] and media_info['plot']:
         media_info_text = f'Title: {media_info["title"]}\nPlot: {media_info["plot"]}'
+    else:
+        media_info_text = 'Sorry, I encountered a problem while getting your suggestion'
     
     reply_text = help_message_text + media_info_text
     if len(reply_text) > 280:
         reply_text = reply_text[0:277] + '...'
     
     return reply_text
-
-
-#print(parse_mention('@AnimeExpertBot like'))
-#print(parse_mention('@AnimeExpertBot like ada'))
-#print(parse_mention('@AnimeExpertBot not like this'))
-#print(parse_mention('@AnimeExpertBot absolutely not like'))

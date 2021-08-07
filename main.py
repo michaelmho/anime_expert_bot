@@ -1,4 +1,5 @@
 import os
+import sys
 import html
 import time
 import logging
@@ -11,17 +12,17 @@ from twitter_api_handler import get_twitter_api, reply_to_tweet, delete_all_twee
 
 rfh = logging.handlers.RotatingFileHandler(
     filename='./text_files/aeb.log',
-    mode='a',
     maxBytes=5*1024*1024,
     backupCount=2,
-    encoding=None,
+    encoding='utf-8',
+    mode='a',
     delay=0
 )
 
 logging.basicConfig(
     format='[%(levelname)s] %(asctime)s : %(message)s', 
-    level=logging.INFO,
     datefmt='%Y-%m-%d %H:%M:%S',
+    level=logging.INFO,
     handlers=[
         rfh
     ]
@@ -30,18 +31,23 @@ logging.basicConfig(
 
 def main():
     log = logging.getLogger()
+    log.info('----------------')
+    log.info('----------------')
+    log.info('----------------')    
 
     twitter_api, last_seen_file_name = get_twitter_api()
 
-    #delete test tweets and post test tweets
-    delete_all_tweets(twitter_api)
-    post_test_tweets(twitter_api)
+    # If we are testing the app
+    if 'test' in sys.argv:
+        delete_all_tweets(twitter_api)
+        post_test_tweets(twitter_api)
+    # If we just wanted to delete all tweets
+    elif 'clear' in sys.argv:
+        delete_all_tweets(twitter_api)
+        exit()
 
     # Get all mentions tweeted after the last seen tweet id
     last_seen_id = get_last_seen_id(last_seen_file_name)
-    log.info('----------------')
-    log.info('----------------')
-    log.info('----------------')
     log.info('Polling mentions')
     mentions = twitter_api.mentions_timeline(last_seen_id)
     log.info(f'Found {len(mentions)} new mentions')
