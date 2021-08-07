@@ -48,15 +48,12 @@ def post_test_tweets(api):
         '@AnimeExpertBot adventure action',
         '@AnimeExpertBot action action',
         '@AnimeExpertBot anime manga',
-        '@AnimeExpertBot asdhbasdasd',
-        '@AnimeExpertBot 123124^&asdasd',
-        '@AnimeExpertBot vu le 14224',
         '@AnimeExpertBot police',
         '@AnimeExpertBot like attack on titan',
+        '@AnimeExpertBot classic action',
         '@AnimeExpertBot manga like mierko',
         '@AnimeExpertBot we are like the champions',
         '@AnimeExpertBot manga current sci-fi like',
-        '@AnimeExpertBot like a very very very very very very very long name',
     ]
 
     for tweet in tweets:

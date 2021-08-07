@@ -20,6 +20,7 @@ def parse_mention(mention):
     mal_request_params = {
         'query' : '',
         'genre_ids' : '',
+        'is_classic' : False,
         'is_current' : False,
         'media_type' : 'anime'
     }
@@ -44,10 +45,11 @@ def parse_mention(mention):
             return help_message, mal_request_params
 
     # Validator for each argument type
-    arg_is_genre = lambda arg : True if arg in GENRES[mal_request_params['media_type']].keys() else False
     arg_is_current = lambda arg : True if arg == 'current' else False
+    arg_is_classic = lambda arg : True if arg == 'classic' else False
     arg_is_media_type = lambda arg: True if arg in MEDIA_STATUSES.keys() else False
-    validators = [arg_is_genre, arg_is_current, arg_is_media_type]
+    arg_is_genre = lambda arg : True if arg in GENRES[mal_request_params['media_type']].keys() else False
+    validators = [arg_is_genre, arg_is_classic, arg_is_current, arg_is_media_type]
 
     get_genre_id = lambda arg : GENRES[mal_request_params["media_type"]][arg]
 
@@ -55,6 +57,7 @@ def parse_mention(mention):
     max_genres = 4
     genres_found = 0
     current_found = False
+    classic_found = False
     media_type_found = False
 
     # Try to find a media type and remove it from the arguments
@@ -101,12 +104,14 @@ def parse_mention(mention):
             # If this argument is current
             elif arg_is_x == arg_is_current:
                 # If current has already been found
-                if current_found:
-                    help_message = f'Found more than one "current"'
-                    break
-                else:
+                if not current_found:
                     mal_request_params['is_current'] = True
                     current_found = True
+
+            elif arg_is_x == arg_is_classic:
+                if not classic_found:
+                    mal_request_params['is_classic'] = True
+                    classic_found = True
             # If this argument is a media type
             else:
                 # If a media type has already been found

@@ -1,12 +1,13 @@
 import os
+import html
 import time
 import logging
 import logging.handlers as handlers
-import html
+
+from mal_api_handler import mal_request_media
 from last_seen import get_last_seen_id, set_last_seen_id
 from mention_handler import parse_mention, get_reply_text
 from twitter_api_handler import get_twitter_api, reply_to_tweet, delete_all_tweets, post_test_tweets
-from mal_api_handler import mal_request_media
 
 rfh = logging.handlers.RotatingFileHandler(
     filename='./text_files/aeb.log',

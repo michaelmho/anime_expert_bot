@@ -1,7 +1,8 @@
 import json
-import requests
 import time
+import requests
 import urllib.request
+
 from random import randrange
 from urllib.error import HTTPError
 from PIL import Image, ImageEnhance
@@ -23,10 +24,11 @@ def mal_request_media(params):
         url = base_url + f'&q={encoded_query}'
     else:
         # Search for the top {limit} media with the requested genre(s)
-        genre_query_string = f'&genre={params["genre_ids"]}' if params['genre_ids'] else ''
-        status_query_string = f'&staus={MEDIA_STATUSES[params["media_type"]]}' if params['is_current'] else ''
         limit = 50
-        url = base_url + f'{status_query_string}{genre_query_string}&limit={limit}&order_by=score'
+        genre = f'&genre={params["genre_ids"]}' if params['genre_ids'] else ''
+        status = f'&staus={MEDIA_STATUSES[params["media_type"]]}' if params['is_current'] else ''
+        start_end = f'&start_date=1988-00-00&end_date=1998-00-00' if params['is_classic'] else ''
+        url = base_url + f'{status}{genre}{start_end}&limit={limit}&order_by=score'
 
     # Make search request
     search_request = requests.get(url)
@@ -92,7 +94,7 @@ def mal_request_media(params):
         try:
             result['title'] = media_info_request_response['title']
             result['plot'] = media_info_request_response['synopsis']
-        except KeyError:
+        except KeyError as err:
             LOG.error(f'The recommended media was missing one of the following keys ["title", "synopsis"]\recommended media: {media_info_request_response}')
             LOG.error(str(err))
             return result
@@ -137,11 +139,9 @@ def mal_request_media(params):
         
         # Open image file and then resize and enhance using PIL 
         image_file = Image.open(image_file_path)
-        resized_image = image_file.resize((round(image_file.size[0]*0.75), round(image_file.size[1]*0.75)))
-        enhancer = ImageEnhance.Sharpness(resized_image)
-        factor = 2
-        enhancer = enhancer.enhance(factor)
-        enhancer.save(image_file_path, quality=100)
+        enhancer = ImageEnhance.Sharpness(image_file)   
+        enhancer = enhancer.enhance(2)
+        enhancer.save(image_file_path, quality=95)
 
         # Add image file path to result
         result['image_file_path'] = image_file_path
