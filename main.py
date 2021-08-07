@@ -38,14 +38,14 @@ def main():
     twitter_api, last_seen_file_name = get_twitter_api()
 
     # If we are testing the app
-    if 'test' in sys.argv:
+    if sys.argv[1] == 'test':
         delete_all_tweets(twitter_api)
         post_test_tweets(twitter_api)
     # If we just wanted to delete all tweets
-    elif 'clear' in sys.argv:
+    elif sys.argv[1] == 'clear':
         delete_all_tweets(twitter_api)
         exit()
-
+    
     # Get all mentions tweeted after the last seen tweet id
     last_seen_id = get_last_seen_id(last_seen_file_name)
     log.info('Polling mentions')
