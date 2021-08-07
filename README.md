@@ -4,6 +4,7 @@
 * [Commands](#Commands)
 * [Genres](#Genres)
 * [Setup](#Setup)
+
 ## Purpose
 Anime_Expert_Bot is a twitter bot created to tweet anime and manga suggestions to users. Users will need to mention @AnimeExpertBot bot in a tweet followed some request arguments. The bot will parse the mention and respond with the title, plot, and cover photo of an appropriate anime/manga
 
@@ -134,8 +135,7 @@ manga | N | Makes it so the suggestion returned will befor manga rather than ani
         "API_KEY": "",
         "API_SECRET": "",
         "ACCESS_KEY": "",
-        "ACCESS_SECRET": "",
-        "CLIENT_ID": ""
+        "ACCESS_SECRET": ""
 }
 ```
 * Find the api key in your twitter developer account...

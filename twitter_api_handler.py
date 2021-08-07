@@ -4,32 +4,35 @@ from constants import LOG
 
 
 def get_twitter_api():
-    # open and read credentials file
-    cred_file = open('./text_files/credentials.json', 'r')
-    cred = cred_file.read()
+    # Open and read credentials file
+    try:
+        cred_file = open('./text_files/credentials.json', 'r')
+        cred = cred_file.read()
+    except Exception as err:
+        LOG.error(f'Could not access credentials.json: {str(err)}')
+        LOG.info('exiting...')
+        exit()
 
-    # parse
+    # Parse credentials file
     credentials = json.loads(cred)
 
-    # Getting credentials from credentials.json
-    auth = tweepy.OAuthHandler(
-        credentials['API_KEY'], credentials['API_SECRET'])
-    auth.set_access_token(
-        credentials['ACCESS_KEY'], credentials['ACCESS_SECRET'])
+    # Authorize connection to the twitter api
+    auth = tweepy.OAuthHandler(credentials['API_KEY'], credentials['API_SECRET'])
+    auth.set_access_token(credentials['ACCESS_KEY'], credentials['ACCESS_SECRET'])
     api = tweepy.API(auth)
 
     return api, './text_files/last_seen.txt'    
 
 
-def reply_to_tweet(api, image_file_path, reply_text, mention_id):
+def reply_to_tweet(api, picture_file_path, reply_text, mention_id):
     try:
-        if image_file_path == '':
+        if picture_file_path == '':
             api.update_status(reply_text, in_reply_to_status_id = mention_id)
         else:
-            api.update_with_media(image_file_path, reply_text, in_reply_to_status_id = mention_id)
+            api.update_with_media(picture_file_path, reply_text, in_reply_to_status_id = mention_id)
     except Exception as err:
         LOG.error('Failed to reply')
-        LOG.error(err)
+        LOG.error(str(err))
 
 
 def delete_all_tweets(api):

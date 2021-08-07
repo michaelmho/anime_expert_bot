@@ -17,7 +17,7 @@ def parse_mention(mention):
     #        Not Required
     #        Type of media to be returned, possible values: 'anime' or 'manga'    
     # Format
-    #    @AnimeExpertBot [current] <genre> <media_type> 
+    #    @AnimeExpertBot (current | classic) <genre> <media_type> 
 
     help_message = ''
     mal_request_params = {
@@ -43,9 +43,7 @@ def parse_mention(mention):
 
     if 'like' in arguments:
         help_message, mal_request_params['query'], mal_request_params['media_type'] = parse_mention_with_like(arguments)
-
-        if mal_request_params['query'] or help_message:
-            return help_message, mal_request_params
+        return help_message, mal_request_params
 
     # Validator for each argument type
     arg_is_current = lambda arg : True if arg == 'current' else False
@@ -98,8 +96,9 @@ def parse_mention(mention):
                     mal_request_params['genre_ids'] = f'{get_genre_id(argument)}'
                 # Else, append this genre id to genre_ids 
                 else:
-                    if not(argument in mal_request_params['genre_ids']):
-                        mal_request_params['genre_ids'] += f',{get_genre_id(argument)}'
+                    genre_id = get_genre_id(argument)
+                    if not(genre_id in mal_request_params['genre_ids']):
+                        mal_request_params['genre_ids'] += f',{genre_id}'
                     else:
                         genres_found-=1
             # If this argument is current

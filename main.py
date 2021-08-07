@@ -3,7 +3,7 @@ import sys
 import html
 import time
 import logging
-import logging.handlers as handlers
+import logging.handlers
 
 from mal_api_handler import mal_request_media
 from last_seen import get_last_seen_id, set_last_seen_id
@@ -69,11 +69,11 @@ def main():
         # Respond to the mention
         reply_text = get_reply_text(help_message, media_info)
         log.info(f'Replying to tweet with "{reply_text}"')
-        reply_to_tweet(twitter_api, media_info['image_file_path'], reply_text, mention._json['id'])
+        reply_to_tweet(twitter_api, media_info['picture_file_path'], reply_text, mention._json['id'])
 
         # Delete media image
-        if media_info['image_file_path']:
-            os.remove(media_info['image_file_path'])
+        if media_info['picture_file_path']:
+            os.remove(media_info['picture_file_path'])
         
         # Delay to keep from reaching mal api request limits
         time.sleep(1)
