@@ -2,10 +2,10 @@ import json
 import time
 import requests
 import urllib.request
-
 from random import randrange
 from urllib.error import HTTPError
 from PIL import Image, ImageEnhance
+
 from constants import MEDIA_STATUSES, LOG
 
 def mal_request_media(params):
