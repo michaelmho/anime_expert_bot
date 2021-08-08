@@ -103,14 +103,22 @@ def parse_mention(mention):
                         genres_found-=1
             # If this argument is current
             elif arg_is_x == arg_is_current:
-                # If current has NOT been found AND classic has NOT been found
-                if (not mal_request_params['is_current']) and (not mal_request_params['is_classic']):
-                    mal_request_params['is_current'] = True
+                # If current has NOT been found
+                if not mal_request_params['is_current']:
+                    # If classic has NOT been found
+                    if not mal_request_params['is_classic']:
+                        mal_request_params['is_current'] = True
+                    elif not help_message:
+                        help_message = 'Found both "current" and "classic"'
             # If this argument is classic
             elif arg_is_x == arg_is_classic:
-                # If classic has NOT been found AND current has NOT been found
-                if (not mal_request_params['is_classic']) and (not mal_request_params['is_current']):
-                    mal_request_params['is_classic'] = True
+                # If classic has NOT been found
+                if not mal_request_params['is_classic']:
+                    # If current has NOT been found
+                    if not mal_request_params['is_current']:
+                        mal_request_params['is_classic'] = True
+                    elif not help_message:
+                        help_message = 'Found both "current" and "classic"'
             # If this argument is a media type
             else:
                 # If a media type has already been found
@@ -174,7 +182,7 @@ def get_reply_text(help_message, media_info):
         media_info_text = 'Sorry, I encountered a problem while getting your suggestion'
     
     reply_text = help_message_text + media_info_text
-    if len(reply_text) > 280:
-        reply_text = reply_text[0:277] + '...'
+    if len(reply_text) > 275:
+        reply_text = reply_text[0:275] + '...'
     
     return reply_text

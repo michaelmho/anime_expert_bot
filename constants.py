@@ -1,6 +1,22 @@
 import logging
+import logging.handlers
 
 
+logging.basicConfig(
+    format='[%(levelname)s] %(asctime)s : %(message)s', 
+    datefmt='%Y-%m-%d %H:%M:%S',
+    level=logging.INFO,
+    handlers=[
+        logging.handlers.RotatingFileHandler(
+            filename='./text_files/aeb.log',
+            maxBytes=5*1024*1024,
+            backupCount=2,
+            encoding='utf-8',
+            mode='a',
+            delay=0
+        )        
+    ]
+)
 LOG = logging.getLogger(__name__)
 GENRES = {
     'anime': {
