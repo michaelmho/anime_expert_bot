@@ -183,6 +183,6 @@ def get_reply_text(help_message, media_info):
     
     reply_text = help_message_text + media_info_text
     if len(reply_text) > 275:
-        reply_text = reply_text[0:275] + '...'
+        reply_text = reply_text[0:272] + '...'
     
     return reply_text
