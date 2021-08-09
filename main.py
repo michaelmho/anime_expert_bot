@@ -2,6 +2,7 @@ import os
 import sys
 import html
 import time
+import requests
 import os as _os
 import dotenv as _dotenv
 
@@ -10,8 +11,8 @@ from mal_api_handler import get_media_suggestion
 from mention_handler import parse_mention, get_reply_text
 from twitter_api_handler import get_twitter_api, reply_to_tweet, delete_all_tweets, tweet_test_tweets
 
-
 _dotenv.load_dotenv()
+TOKEN = _os.environ['TOKEN']
 
 def main():
     while True:
@@ -63,8 +64,26 @@ def main():
                 os.remove(media_info['picture_file_path'])
 
         if len(mentions) > 0:
-            # Set the last seen tweet id to the id if the last parsed mention
-            _os.environ['LAST_SEEN_ID'] = str(mentions[-1]._json['id'])
+            LOG.info(' ')
+            LOG.info('Updating LAST_SEEN_ID')
+            try:
+                # Update LAST_SEEN_ID env variable through the heroku api
+                mention_id = mentions[-1]._json['id']
+                body = {'LAST_SEEN_ID':f'{mention_id}'}
+                url = 'https://api.heroku.com/apps/anime-expert-bot/config-vars'
+                head = {'Accept':'application/vnd.heroku+json; version=3', 'Authorization':f'Bearer {TOKEN}'}
+                response = requests.patch(url, headers=head, data=body)
+                response.raise_for_status()
+
+                # Validate LAST_SEEN_ID was updated
+                if mention_id != (response.json())['LAST_SEEN_ID']:
+                    raise requests.exceptions.RequestException('API failed to update LAST_SEEN_ID')
+            except requests.exceptions.RequestException as err:
+                LOG.error('Could not update LAST_SEEN_ID')
+                LOG.error(str(err))
+            except KeyError as err:
+                LOG.error('Could not update LAST_SEEN_ID')
+                LOG.error(str(err))
 
         LOG.info(' ')
         LOG.info('exiting...')
