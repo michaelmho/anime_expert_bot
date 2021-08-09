@@ -31,8 +31,8 @@ def parse_mention(mention):
 
     # Create arguments array from mention text
     arguments = mention.lower().strip().split(' ')
-    # Remove '@AnimeExperBot' from the arguments
-    arguments.remove('@AnimeExpertBot')
+    # Remove '@AnimeExpertBot' from the arguments
+    arguments.remove('@animeexpertbot')
     # Remove any characters that are not a-z or '-' from each argument
     arguments = list(map(lambda arg : re.sub('[^a-z-]', '', arg), arguments))
     # Remove any arguments that are now ''
