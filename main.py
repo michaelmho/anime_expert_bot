@@ -22,18 +22,19 @@ def main():
 
         twitter_api, last_seen_file_name = get_twitter_api()
         
-        # # If we are testing the app
-        # if sys.argv[1] == 'test':
-        #     LOG.info('Deleting all tweets')
-        #     delete_all_tweets(twitter_api)
-        #     LOG.info('Tweeting test tweets')
-        #     tweet_test_tweets(twitter_api)
-        # # If we just wanted to delete all tweets
-        # elif sys.argv[1] == 'clear':
-        #     LOG.info('Deleting all tweets')
-        #     delete_all_tweets(twitter_api)
-        #     LOG.info('exiting...')
-        #     exit()
+        if len(sys.argv) > 1:
+            # If we are testing the app
+            if sys.argv[1] == 'test':
+                LOG.info('Deleting all tweets')
+                delete_all_tweets(twitter_api)
+                LOG.info('Tweeting test tweets')
+                tweet_test_tweets(twitter_api)
+            # If we just wanted to delete all tweets
+            elif sys.argv[1] == 'clear':
+                LOG.info('Deleting all tweets')
+                delete_all_tweets(twitter_api)
+                LOG.info('exiting...')
+                exit()
     
         # Get all mentions tweeted after the last seen tweet id
         LOG.info('Polling mentions')
