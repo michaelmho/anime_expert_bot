@@ -46,7 +46,7 @@ def delete_all_tweets(api):
             LOG.error(f'Failed to delete: {status.id}')
 
 
-def post_test_tweets(api):
+def tweet_test_tweets(api):
     tweets = [
         '@AnimeExpertBot current classic',
         '@AnimeExpertBot classic current',
@@ -58,8 +58,7 @@ def post_test_tweets(api):
         '@AnimeExpertBot like attack on titan',
         '@AnimeExpertBot classic action',
         '@AnimeExpertBot manga like mierko',
-        '@AnimeExpertBot we are like the champions',
-        '@AnimeExpertBot manga current sci-fi like',
+        '@AnimeExpertBot manga current sci-fi',
     ]
 
     for tweet in tweets:

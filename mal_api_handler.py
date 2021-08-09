@@ -8,7 +8,8 @@ from PIL import Image, ImageEnhance
 
 from constants import MEDIA_STATUSES, LOG
 
-def mal_request_media(params):
+
+def get_media_suggestion(params):
     result = {
         'plot' : '',
         'title' : '',
@@ -19,100 +20,55 @@ def mal_request_media(params):
 
     # If this is a mention with 'like'
     if params['query']:
-        # Search for {media_type} with name like {query}
+        # Form url to search for {media_type} with name like {query}
         encoded_query = urllib.parse.quote(params['query'])
         url = base_url + f'&q={encoded_query}'
     else:
-        # Search for the top {limit} media with the requested genre(s)
+        # Form url to search for the top {limit} media with the requested genre(s)
         limit = 50
         genre = f'&genre={params["genre_ids"]}' if params['genre_ids'] else ''
         status = f'&status={MEDIA_STATUSES[params["media_type"]]}' if params['is_current'] else ''
         start_end = f'&start_date=1988-00-00&end_date=1998-00-00' if params['is_classic'] else ''
         url = base_url + f'{status}{genre}{start_end}&limit={limit}&order_by=score'
 
-    # Make search request
-    try:
-        search_response = requests.get(url, timeout=(3,5))
-    except requests.exceptions.Timeout as err:
-        LOG.error(f'Timeout on {url}: {str(err)}')
-        return result
-    
-    search_response_json = search_response.json()
-
-    # If the search request was NOT successful
-    if search_response.status_code != 200:
-        LOG.error(f'Received status code {search_response.status_code} from {url}\nResponse from api: {search_response_json}')
+    # Make the search request
+    returned_media = handle_api_request(url, 'results')
+    # If the was any problem with the request, return
+    if not returned_media:
         return result
 
-    LOG.info(f'Received status code {search_response.status_code} from {url}')        
-    
-    # Array of all media returned from the seach request
-    returned_media = search_response_json['results']
-
-    # If no media was returned from the search request
-    if len(returned_media) == 0:
-        LOG.info(f'No media returned from {url}')
-        return result
-
+    # Select 1 of the returned media
     # If this is a mention with 'like', set index to zero in order to pull closeset match
-    # Else set index to random index
+    # Else set the index at random
     media_index = 0 if params['query'] else randrange(len(returned_media))
     selected_media = returned_media[media_index]
 
     # If this is a mention with 'like'
     if params['query']:
         # Make a request for recommendations similar to the selected media
-        try:
-            url = f'https://api.jikan.moe/v3/{params["media_type"]}/{selected_media["mal_id"]}/recommendations'
-            recommendations_response = requests.get(url, timeout=(3,5))
-        except requests.exceptions.Timeout as err:
-            LOG.error(f'Timeout on {url}: {str(err)}')
+        url = f'https://api.jikan.moe/v3/{params["media_type"]}/{selected_media["mal_id"]}/recommendations'
+        returned_recommendations = handle_api_request(url, 'recommendations')
+        # If the was any problem with the request, return
+        if not returned_recommendations:
             return result
         
-        recommendations_response_json = recommendations_response.json()
-
-        # If recommendations request is NOT successful
-        if recommendations_response.status_code != 200:
-            LOG.error(f'Received status code {recommendations_response.status_code} from {url}\nResponse from api: {recommendations_response_json}')
-            return result
-
-        LOG.info(f'Received status code {recommendations_response.status_code} from {url}')
-        
-        # Array of all recommendations returned
-        returned_recommendations = recommendations_response_json['recommendations']
-
-        # If no recommendations returned
-        if len(returned_recommendations) == 0:
-            LOG.info(f'No recommendations returned from {url}')
-            return result
-        
-        # Select the mal_id of a random recommendation
+        # Select a random recommendation
         reccomendation_index = randrange(len(returned_recommendations))
         selected_media['mal_id'] = returned_recommendations[reccomendation_index]['mal_id']
 
-        # Make a request for details on the selected recommendation        
-        try:
-            url = f'https://api.jikan.moe/v3/{params["media_type"]}/{selected_media["mal_id"]}'
-            media_details_response = requests.get(url, timeout=(3,5))
-        except requests.exceptions.Timeout as err:
-            LOG.error(f'Timeout on {url}: {str(err)}')
+        # Make a request for details on the selected media        
+        url = f'https://api.jikan.moe/v3/{params["media_type"]}/{selected_media["mal_id"]}'
+        returned_media_details = handle_api_request(url, '')
+        # If the was any problem with the request, return
+        if not returned_media_details:
             return result
         
-        media_details_response_json = media_details_response.json()
-
-        # If media details request is NOT successful
-        if media_details_response.status_code != 200:
-            LOG.error(f'Received status code {media_details_response.status_code} from {url}\nResponse from api: {media_details_response_json}')
-            return result
-
-        LOG.info(f'Received status code {media_details_response.status_code} from {url}')
-        
-        # Add the selected media's title and plot to the result
+        # Add the selected media's details to the result
         try:
-            result['title'] = media_details_response_json['title']
-            result['plot'] = media_details_response_json['synopsis']
+            result['title'] = returned_media_details['title']
+            result['plot'] = returned_media_details['synopsis']
         except KeyError as err:
-            LOG.error(f'The recommended media was missing one of the following keys ["title", "synopsis"]\nrecommended media: {media_details_response_json}')
+            LOG.error(f'The recommended media was missing one of the following keys ["title", "synopsis"]\nRecommended media: {returned_media_details}')
             LOG.error(str(err))
             return result
     else:
@@ -121,48 +77,31 @@ def mal_request_media(params):
             result['title'] = selected_media['title']
             result['plot'] =  selected_media['synopsis']
         except KeyError as err:
-            LOG.error(f'The selected media was missing one of the following keys ["title", "synopsis"]\nselected media: {selected_media}')
+            LOG.error(f'The selected media was missing one of the following keys ["title", "synopsis"]\nSelected media: {selected_media}')
             LOG.error(str(err))
             return result
 
-    # Request picture urls for this media
-    try:
-        url = f'https://api.jikan.moe/v3/{params["media_type"]}/{selected_media["mal_id"]}/pictures'
-        pictures_response = requests.get(url, timeout=(3,5))
-    except requests.exceptions.Timeout as err:
-        LOG.error(f'Timeout on {url}: {str(err)}')
-        return result
-
-    pictures_response_json = pictures_response.json()
-    
-    # If the request was NOT successful
-    if pictures_response.status_code != 200:
-        LOG.error(f'Received status code {pictures_response.status_code} from {url}\nResponse from api: {pictures_response_json}')
+    # Request picture urls for the selected media
+    url = f'https://api.jikan.moe/v3/{params["media_type"]}/{selected_media["mal_id"]}/pictures'
+    returned_picture_urls = handle_api_request(url, 'pictures')
+    # If the was any problem with the request, return
+    if not returned_picture_urls:
         return result
     
-    LOG.info(f'Received status code {pictures_response.status_code} from {url}')
-
-    # Array of urls for pictures of the selected media
-    picture_urls = pictures_response_json['pictures']
-
-    # If no picture urls were returned
-    if len(picture_urls) == 0:
-        LOG.info(f'No picture urls returned from {url}')
-        return result
+    # Select a random picture url
+    picture_index = randrange(len(returned_picture_urls))
+    selected_picture_url = returned_picture_urls[picture_index]['large']
     
-    # Select the index of a random picture url
-    picture_index = randrange(len(picture_urls))
-    
-    # Save the file path for the picture of the selected media
+    # Set the file path for the picture of the selected media
     current_timestamp = int(time.time())
     picture_file_path = f'./images/{selected_media["mal_id"]}_{current_timestamp}.png'
 
     try:
         # Create a picture file
         image_file = open(picture_file_path, 'w')
-        # Request the picture from the selected picture url
-        # Save it to the picture_file_path
-        urllib.request.urlretrieve(picture_urls[picture_index]['large'], picture_file_path)
+        # Request the picture of the selected media from the selected picture url
+        # Save it to the picture file path
+        urllib.request.urlretrieve(selected_picture_url, picture_file_path)
         image_file.close()
         
         # Open picture file and enhance the quality using PIL 
@@ -180,3 +119,32 @@ def mal_request_media(params):
         LOG.error(f'Received status code {err.code} from "{selected_media["image_url"]}"')
 
     return result
+
+
+def handle_api_request(url, json_key):
+    try:
+        response = requests.get(url, timeout=(5,12))
+    except requests.exceptions.Timeout as err:
+        LOG.error(f'Timeout on {url}: {str(err)}')
+        return []
+
+    if response.status_code != 200:
+        LOG.error(f'Received status code {response.status_code} from {url}\nApi response: {response.json()}')
+        return []
+
+    LOG.info(f'Received status code {response.status_code} from {url}')
+
+    if json_key:
+        try:
+            results = (response.json())[json_key]
+        except KeyError as err:
+            LOG.error(f'Response missing key \"{json_key}\"')
+            LOG.error(str(err))
+            return []        
+
+        if len(results) == 0:
+            LOG.info(f'No results returned from {url}')
+    else:
+        results = response.json()
+
+    return results 
