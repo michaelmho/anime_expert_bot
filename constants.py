@@ -1,6 +1,5 @@
 import logging
 
-
 LOG = logging.getLogger(__name__)
 GENRES = {
     'anime': {

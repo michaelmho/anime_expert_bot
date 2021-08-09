@@ -1,26 +1,28 @@
 import json
 import tweepy
+import os as _os
+import dotenv as _dotenv
+
 from constants import LOG
+
+_dotenv.load_dotenv()
+
+API_KEY = _os.environ['API_KEY']
+API_SECRET = _os.environ['API_SECRET']
+ACCESS_KEY = _os.environ['ACCESS_KEY']
+ACCESS_SECRET= _os.environ['ACCESS_SECRET']
 
 
 def get_twitter_api():
-    # Open and read credentials file
-    try:
-        cred_file = open('./text_files/credentials.json', 'r')
-        cred = cred_file.read()
+    # Authorize connection to the twitter api
+    try:  
+        auth = tweepy.OAuthHandler(API_KEY, API_SECRET)
+        auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
+        api = tweepy.API(auth)
     except Exception as err:
         LOG.error(f'Could not access credentials.json: {str(err)}')
         LOG.info('exiting...')
         exit()
-
-    # Parse credentials file
-    credentials = json.loads(cred)
-
-    # Authorize connection to the twitter api
-    auth = tweepy.OAuthHandler(credentials['API_KEY'], credentials['API_SECRET'])
-    auth.set_access_token(credentials['ACCESS_KEY'], credentials['ACCESS_SECRET'])
-    api = tweepy.API(auth)
-
     return api, './text_files/last_seen.txt'    
 
 

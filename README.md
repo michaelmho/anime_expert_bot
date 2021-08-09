@@ -1,19 +1,22 @@
 ## Table of contents
-* [Purpose](#Purpose)
-* [Technologies](#Technologies)
-* [Commands](#Commands)
-* [Genres](#Genres)
-* [Setup](#Setup)
+
+- [Purpose](#Purpose)
+- [Technologies](#Technologies)
+- [Commands](#Commands)
+- [Genres](#Genres)
+- [Setup](#Setup)
 
 ## Purpose
+
 Anime_Expert_Bot is a twitter bot created to tweet anime and manga suggestions to users. Users will need to mention @AnimeExpertBot bot in a tweet followed some request arguments. The bot will parse the mention and respond with the title, plot, and cover photo of an appropriate anime/manga
 
 ## Technologies
-* Python version: 3.8.5
-* Python modules
-    * Pillow
-    * Tweepy
-* [Jikan Unoffical MyAnimeList API](https://jikan.docs.apiary.io/#)
+
+- Python version: 3.8.5
+- Python modules
+  - Pillow
+  - Tweepy
+- [Jikan Unoffical MyAnimeList API](https://jikan.docs.apiary.io/#)
 
 ## Commands
 
@@ -33,103 +36,109 @@ genre | Y | 1 to 4 genre names for the suggestion to match | [Any genre](#Genres
 manga | N | Makes it so the suggestion returned will befor manga rather than anime | 'manga' | Any
 
 ## Genres
+
 ### Anime
-* action
-* adventure
-* cars
-* comedy
-* dementia
-* demons	
-* mystery
-* drama
-* ecchi	
-* fantasy	
-* game	
-* hentai	
-* historical
-* horror	
-* kids	
-* magic	
-* martial-arts
-* mecha	
-* music	
-* parody	
-* samurai	
-* romance	
-* school	
-* sci-fi	 
-* shoujo	
-* shoujo-ai
-* shounen	
-* shounen-ai
-* space
-* sports	
-* super-power
-* vampire	
-* yaoi	
-* yuri	
-* harem	
-* slice-of-life
-* supernatural
-* military
-* police		
-* psychological
-* thriller
-* seinen	
-* josei
+
+- action
+- adventure
+- cars
+- comedy
+- dementia
+- demons
+- mystery
+- drama
+- ecchi
+- fantasy
+- game
+- hentai
+- historical
+- horror
+- kids
+- magic
+- martial-arts
+- mecha
+- music
+- parody
+- samurai
+- romance
+- school
+- sci-fi
+- shoujo
+- shoujo-ai
+- shounen
+- shounen-ai
+- space
+- sports
+- super-power
+- vampire
+- yaoi
+- yuri
+- harem
+- slice-of-life
+- supernatural
+- military
+- police
+- psychological
+- thriller
+- seinen
+- josei
 
 ### Manga
-* action
-* adventure
-* cars
-* comedy
-* dementia
-* demons	
-* mystery
-* drama
-* ecchi	
-* fantasy	
-* game	
-* hentai	
-* historical
-* horror	
-* kids	
-* magic	
-* martial-arts
-* mecha	
-* music	
-* parody	
-* samurai	
-* romance	
-* school	
-* sci-fi	 
-* shoujo	
-* shoujo-ai
-* shounen	
-* shounen-ai
-* space
-* sports	
-* super-power
-* vampire	
-* yaoi	
-* yuri	
-* harem	
-* slice-of-life
-* supernatural
-* military
-* police		
-* psychological
-* seinen
-* josei	
-* doujinshi
-* gender-bender
-* thriller
+
+- action
+- adventure
+- cars
+- comedy
+- dementia
+- demons
+- mystery
+- drama
+- ecchi
+- fantasy
+- game
+- hentai
+- historical
+- horror
+- kids
+- magic
+- martial-arts
+- mecha
+- music
+- parody
+- samurai
+- romance
+- school
+- sci-fi
+- shoujo
+- shoujo-ai
+- shounen
+- shounen-ai
+- space
+- sports
+- super-power
+- vampire
+- yaoi
+- yuri
+- harem
+- slice-of-life
+- supernatural
+- military
+- police
+- psychological
+- seinen
+- josei
+- doujinshi
+- gender-bender
+- thriller
 
 ## Setup
-* Create a twitter developer account...
-* Clone this repository
-* Install the [python modules](#Technologies) using pip
-* Within the text_files folder create a file called 'credentials.json' and copy the contents below into the file
+
+- Create a twitter developer account...
+- Clone this repository
+- Install the [python modules](#Technologies) using pip
+- Within the text_files folder create a file called 'credentials.json' and copy the contents below into the file
+- Figure out all your API keys and store them in credentials.json
+
 ```
 {
         "API_KEY": "",
@@ -138,4 +147,5 @@ manga | N | Makes it so the suggestion returned will befor manga rather than ani
         "ACCESS_SECRET": ""
 }
 ```
-* Find the api key in your twitter developer account...
+
+- Find the api key in your twitter developer account...
