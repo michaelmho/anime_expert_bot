@@ -36,7 +36,7 @@ def main():
     
         # Get all mentions tweeted after the last seen tweet id
         LOG.info('Polling mentions')
-        mentions = twitter_api.mentions_timeline(_os.environ['LAST_SEEN_ID'])
+        mentions = twitter_api.mentions_timeline(int(_os.environ['LAST_SEEN_ID']))
         LOG.info(f'Found {len(mentions)} new mentions')
         
         # Respond to mentions from newest to oldest
@@ -63,7 +63,7 @@ def main():
                 os.remove(media_info['picture_file_path'])
 
         # Set the last seen tweet id to the id if the last parsed mention
-        _os.environ['LAST_SEEN_ID'] = mentions[-1]._json['id']
+        _os.environ['LAST_SEEN_ID'] = str(mentions[-1]._json['id'])
 
         LOG.info(' ')
         LOG.info('exiting...')
