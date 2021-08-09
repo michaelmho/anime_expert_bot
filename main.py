@@ -62,8 +62,9 @@ def main():
             if media_info['picture_file_path']:
                 os.remove(media_info['picture_file_path'])
 
-        # Set the last seen tweet id to the id if the last parsed mention
-        _os.environ['LAST_SEEN_ID'] = str(mentions[-1]._json['id'])
+        if len(mentions) > 0:
+            # Set the last seen tweet id to the id if the last parsed mention
+            _os.environ['LAST_SEEN_ID'] = str(mentions[-1]._json['id'])
 
         LOG.info(' ')
         LOG.info('exiting...')
