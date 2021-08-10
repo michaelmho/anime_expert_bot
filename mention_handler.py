@@ -157,8 +157,8 @@ def parse_mention_with_like(arguments):
         else:
             help_message = 'Missing argument(s)'
     elif arguments[1] == 'like':
-        if arguments[0] == 'manga':
-            media_type = 'manga'
+        if arguments[0] == 'manga' or arguments[0] == 'anime':
+            media_type = arguments[0]
             if len(arguments) > 2:
                 query = ' '.join(arguments[2:])
             else:
