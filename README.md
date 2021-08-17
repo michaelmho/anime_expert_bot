@@ -133,11 +133,10 @@ manga | N | Makes it so the suggestion returned will befor manga rather than ani
 
 ## Setup
 
-- Create a twitter developer account...
+- Create a twitter developer account
 - Clone this repository
-- Install the [python modules](#Technologies) using pip
-- Within the text_files folder create a file called 'credentials.json' and copy the contents below into the file
-- Figure out all your API keys and store them in credentials.json
+- Install the required [python modules](#Technologies) using pip
+- Within the text_files folder create a file called 'credentials.json' and copy the contents below into it
 
 ```
 {
@@ -148,4 +147,4 @@ manga | N | Makes it so the suggestion returned will befor manga rather than ani
 }
 ```
 
-- Find the api key in your twitter developer account...
+- Retrieve all your API keys from your twitter developer account and store them in credentials.json

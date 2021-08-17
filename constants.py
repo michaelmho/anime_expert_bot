@@ -1,7 +1,6 @@
 import logging
 import logging.handlers
 
-
 logging.basicConfig(
     format='[%(levelname)s] %(asctime)s : %(message)s', 
     datefmt='%Y-%m-%d %H:%M:%S',
@@ -116,3 +115,4 @@ MEDIA_STATUSES = {
     'anime': 'airing',
     'manga': 'publishing'
 }
+MEDIA_TYPES = MEDIA_STATUSES.keys()

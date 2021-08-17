@@ -6,21 +6,22 @@ import os as _os
 import dotenv as _dotenv
 
 from constants import LOG
+from mention_analyzer import MentionAnalyzer
 from last_seen import update_heroku_env_variable
-from mal_api_handler import get_media_suggestion
-from mention_handler import parse_mention, get_reply_text
-from twitter_api_handler import get_twitter_api, reply_to_tweet, delete_all_tweets, tweet_test_tweets
+from suggestion_retriever import SuggestionRetriever
+from twitter_api import get_twitter_api, reply_to_tweet, delete_all_tweets, tweet_test_tweets
 
 _dotenv.load_dotenv()
 TOKEN = _os.environ['TOKEN']
 
 def main():
+    analyzer = MentionAnalyzer()
+    suggester = SuggestionRetriever()
+    
     while True:
-        LOG.info('----------------')
-        LOG.info('----------------')
-        LOG.info('----------------')    
+        LOG.info('----------------\n----------------\n----------------') 
 
-        twitter_api, last_seen_file_name = get_twitter_api()
+        twitter_api = get_twitter_api()
         
         if len(sys.argv) > 1:
             # If we are testing the app
@@ -36,7 +37,7 @@ def main():
                 LOG.info('exiting...')
                 exit()
     
-        # Get all mentions tweeted after the last seen tweet id
+        # Retrieve all mentions tweeted after the last seen tweet id
         LOG.info('Polling mentions')
         mentions = twitter_api.mentions_timeline(int(_os.environ['LAST_SEEN_ID']))
         LOG.info(f'Found {len(mentions)} new mentions')
@@ -47,22 +48,26 @@ def main():
             mention_text = html.unescape(mention._json['text'])
             LOG.info(f'Parsing mention: {mention_text}')
 
-            # Parse the mention
-            help_message, mal_request_params = parse_mention(mention_text)
-            LOG.info(f'Returned {help_message}, {mal_request_params}')
+            # Analyze the mention
+            help_message, mal_search_criteria = analyzer.analyze(mention_text)
+            LOG.info(f'Returned help_message:{help_message}, mal_search_criteria:{mal_search_criteria}')
 
-            # Make a mal api request based on the mention
-            media_info = get_media_suggestion(mal_request_params)
-            LOG.info(f'Returned {media_info}')
+            # Retrieve a suggestion from the mal api based on the search criteria
+            media_info = suggester.get_suggestion(mal_search_criteria)
+            LOG.info(f'Returned media_info:{media_info}')
 
             # Respond to the mention
-            reply_text = get_reply_text(help_message, media_info)
-            LOG.info(f'Replying to tweet with "{reply_text}"')
-            reply_to_tweet(twitter_api, media_info['picture_file_path'], reply_text, mention._json['id'])
+            reply_to_tweet(twitter_api, help_message, media_info, mention._json['id'])
 
-            # Delete media image
-            if media_info['picture_file_path']:
-                os.remove(media_info['picture_file_path'])
+            # Delete the saved picture if necessary
+            picture_file_path = media_info['picture_file_path']
+            if picture_file_path:
+                try:
+                    os.remove(picture_file_path)
+                    LOG.info(f'Deleted picture at {picture_file_path}')
+                except Exception as err:
+                    LOG.error(f'Failed to delete pictured at {picture_file_path}')
+                    LOG.error(str(err))
 
         if len(mentions) > 0:
             update_heroku_env_variable(TOKEN, 'LAST_SEEN_ID', mentions[-1]._json['id'])

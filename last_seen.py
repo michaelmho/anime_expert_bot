@@ -2,7 +2,6 @@ import requests
 
 from constants import LOG
 
-
 # Not currently in use
 def get_last_seen_id(file_name):
     try:
@@ -30,7 +29,7 @@ def set_last_seen_id(last_seen_id, file_name):
 
 def update_heroku_env_variable(token, variable_name, value):
     LOG.info(' ')
-    LOG.info('Updating {variable_name}')
+    LOG.info(f'Updating {variable_name}')
     try:
         # Update {variable_name} env variable through the heroku api
         body = {f'{variable_name}':f'{value}'}
@@ -40,11 +39,11 @@ def update_heroku_env_variable(token, variable_name, value):
         response.raise_for_status()
 
         # Validate {variable_name} was updated
-        if value != (response.json())['{variable_name}']:
-            raise requests.exceptions.RequestException('API failed to update {variable_name}')
+        if value != (response.json())[f'{variable_name}']:
+            raise requests.exceptions.RequestException(f'API failed to update {variable_name}')
     except requests.exceptions.RequestException as err:
-        LOG.error('Could not update {variable_name}')
+        LOG.error(f'Could not update {variable_name}')
         LOG.error(str(err))
     except KeyError as err:
-        LOG.error('Could not update {variable_name}')
+        LOG.error(f'Could not update {variable_name}')
         LOG.error(str(err))
