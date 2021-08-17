@@ -14,8 +14,18 @@ Anime_Expert_Bot is a twitter bot created to tweet anime and manga suggestions t
 
 - Python version: 3.8.5
 - Python modules
-  - Pillow
-  - Tweepy
+  - certifi version 2021.5.30
+  - chardet version 4.0.0
+  - idna version 2.10
+  - oauthlib version 3.1.1
+  - Pillow version 8.2.0
+  - PySocks version 1.7.1
+  - python-dotenv version 0.19.0
+  - requests version 2.25.1
+  - requests-oauthlib version 1.3.0
+  - six version 1.16.0
+  - tweepy version 3.10.0
+  - urllib3 version 1.26.5
 - [Jikan Unoffical MyAnimeList API](https://jikan.docs.apiary.io/#)
 
 ## Commands
