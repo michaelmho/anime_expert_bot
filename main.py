@@ -73,7 +73,10 @@ def main():
                     LOG.error(f'Failed to delete pictured at {picture_file_path}')
                     LOG.error(str(err))
             
+            # Update last seen id
             update_heroku_env_variable('LAST_SEEN_ID', mention._json['id'])
+            # Delay before next iteration
+            time.sleep(1)
 
         LOG.info(' ')
         LOG.info('exiting...')

@@ -59,7 +59,7 @@ class SuggestionRetriever:
         return results
 
 
-    def mal_api_request(self, url, json_key):
+    def mal_api_request(self, url, key):
         try:
             response = requests.get(url, timeout=(5,10))
         except requests.exceptions.Timeout as err:
@@ -72,11 +72,11 @@ class SuggestionRetriever:
 
         LOG.info(f'Received status code {response.status_code} from {url}')
 
-        if json_key:
+        if key:
             try:
-                results = (response.json())[json_key]
+                results = (response.json())[key]
             except KeyError as err:
-                LOG.error(f'Response missing key \"{json_key}\"')
+                LOG.error(f'Response missing key \"{key}\"')
                 return []        
 
             if len(results) == 0:
