@@ -10,8 +10,7 @@ class MentionAnalyzer():
         # Control variables
         self.max_genres = 4
         self.genres_found = 0
-        self.anime_found = False
-        self.manga_found = False
+        self.media_type_found = False
 
         # Return values
         self.query = ''
@@ -49,13 +48,13 @@ class MentionAnalyzer():
 
 
     def parse_mention(self, mention_text):
-        # Create self.arguments array from mention text
+        # Create arguments array from mention text
         self.arguments = mention_text.lower().strip().split(' ')
-        # Remove '@AnimeExpertBot' from the self.arguments
+        # Remove '@AnimeExpertBot' from the arguments
         self.arguments.remove('@animeexpertbot')
         # Remove any characters that are not a-z or '-' from each argument
         self.arguments = list(map(lambda argument : re.sub('[^a-z-]', '', argument), self.arguments))
-        # Remove any self.arguments that are now ''
+        # Remove any arguments that are now ''
         self.arguments = [argument for argument in self.arguments if argument != '']
 
 
@@ -98,7 +97,7 @@ class MentionAnalyzer():
 
 
     def validate_classic(self, argument):
-        arg_is_classic =  True if argument == 'classic' else False
+        arg_is_classic = True if argument == 'classic' else False
 
         if arg_is_classic:
             # If classic has NOT been found
@@ -116,13 +115,11 @@ class MentionAnalyzer():
         arg_is_media_type = True if argument in MEDIA_TYPES else False
 
         if arg_is_media_type:
-            if argument == 'anime' and not self.anime_found:
-                self.anime_found = True
-            elif not self.manga_found:
-                self.manga_found = True
+            if argument == 'manga' and not self.media_type_found:
+                self.media_type = 'manga'
 
-            if (self.anime_found and self.manga_found) and not self.help_message:
-                self.help_message = 'Found both "manga" and "anime"'
+            if self.media_type_found and not self.help_message:
+                self.help_message = 'You used "manga" and "anime"'
 
         return arg_is_media_type
 
@@ -132,18 +129,18 @@ class MentionAnalyzer():
             if len(self.arguments) > 1:
                 self.query = ' '.join(self.arguments[1:])
             else:
-                self.help_message = 'Missing argument(s)'
+                self.help_message = 'It\'s empty'
         elif self.arguments[1] == 'like':
             if self.arguments[0] in MEDIA_TYPES:
                 self.media_type = self.arguments[0]
                 if len(self.arguments) > 2:
                     self.query = ' '.join(self.arguments[2:])
                 else:
-                    self.help_message = 'Missing argument(s)'
+                    self.help_message = 'There\'s nothing after "like"'
             else:
-                self.help_message = f'Command "{self.arguments[0]} {self.arguments[1]}" is not recognized'
+                self.help_message = f'"{self.arguments[0]} like" is not recognized'
         else:
-            self.help_message = '"anime like" or "manga like" can only be used at the beginning of a request'
+            self.help_message = '"like" should be at the beginning'
 
 
     def analyze_mention(self):

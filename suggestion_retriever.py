@@ -59,9 +59,9 @@ class SuggestionRetriever:
         return results
 
 
-    def api_request(self, url, json_key):
+    def mal_api_request(self, url, json_key):
         try:
-            response = requests.get(url, timeout=(5,12))
+            response = requests.get(url, timeout=(5,10))
         except requests.exceptions.Timeout as err:
             LOG.error(f'Timeout on {url}: {str(err)}')
             return []
@@ -93,7 +93,7 @@ class SuggestionRetriever:
         url = base_url + f'&q={encoded_query}'
 
         # Make the search request
-        returned_media = self.api_request(url, 'results')
+        returned_media = self.mal_api_request(url, 'results')
         
         if returned_media:
             # Select the first returned media since it's the closest match
@@ -101,7 +101,7 @@ class SuggestionRetriever:
 
             # Make a request for recommendations similar to the selected media
             url = f'https://api.jikan.moe/v3/{self.media_type}/{self.media_id}/recommendations'
-            returned_recommendations = self.api_request(url, 'recommendations')
+            returned_recommendations = self.mal_api_request(url, 'recommendations')
             
             if returned_recommendations:
                 # Select a random recommendation
@@ -110,7 +110,7 @@ class SuggestionRetriever:
 
                 # Make a request for details on the selected media        
                 url = f'https://api.jikan.moe/v3/{self.media_type}/{self.media_id}'
-                returned_media_details = self.api_request(url, '')
+                returned_media_details = self.mal_api_request(url, '')
                 
                 if returned_media_details:
                     try:
@@ -130,7 +130,7 @@ class SuggestionRetriever:
         url = base_url + f'{status}{genre}{start_end}&limit={limit}&order_by=score'
 
         # Make the search request
-        returned_media = self.api_request(url, 'results')
+        returned_media = self.mal_api_request(url, 'results')
         
         if returned_media:
             # Select 1 of the returned media at random
@@ -149,7 +149,7 @@ class SuggestionRetriever:
     def save_media_picture(self):
         # Request picture urls for the selected media
         url = f'https://api.jikan.moe/v3/{self.media_type}/{self.media_id}/pictures'
-        returned_picture_urls = self.api_request(url, 'pictures')
+        returned_picture_urls = self.mal_api_request(url, 'pictures')
         
         if returned_picture_urls:
             # Select a random picture url
@@ -161,9 +161,9 @@ class SuggestionRetriever:
             self.picture_file_path = f'./images/{self.media_id}_{current_timestamp}.png'
 
             try:
-                picture_file = open(self.picture_file_path, 'w')
                 # Request the picture of the selected media from the selected picture url
                 # Save it to the picture file path
+                picture_file = open(self.picture_file_path, 'w')
                 urllib.request.urlretrieve(selected_picture_url, self.picture_file_path)
                 picture_file.close()
                 

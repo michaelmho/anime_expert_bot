@@ -1,8 +1,12 @@
 import logging
+import os as _os
 import logging.handlers
+import dotenv as _dotenv
+
+_dotenv.load_dotenv()
 
 logging.basicConfig(
-    format='[%(levelname)s] %(asctime)s : %(message)s', 
+    format='[%(levelname)s]\t%(asctime)s : %(message)s', 
     datefmt='%Y-%m-%d %H:%M:%S',
     level=logging.INFO,
     handlers=[
@@ -116,3 +120,8 @@ MEDIA_STATUSES = {
     'manga': 'publishing'
 }
 MEDIA_TYPES = MEDIA_STATUSES.keys()
+TOKEN = _os.environ['TOKEN']
+API_KEY = _os.environ['API_KEY']
+API_SECRET = _os.environ['API_SECRET']
+ACCESS_KEY = _os.environ['ACCESS_KEY']
+ACCESS_SECRET = _os.environ['ACCESS_SECRET']

@@ -6,40 +6,44 @@ import os as _os
 import dotenv as _dotenv
 
 from constants import LOG
+from twitter_bot import TwitterBot
 from mention_analyzer import MentionAnalyzer
 from last_seen import update_heroku_env_variable
 from suggestion_retriever import SuggestionRetriever
-from twitter_api import get_twitter_api, reply_to_tweet, delete_all_tweets, tweet_test_tweets
 
-_dotenv.load_dotenv()
-TOKEN = _os.environ['TOKEN']
 
 def main():
     analyzer = MentionAnalyzer()
     suggester = SuggestionRetriever()
+    bot = TwitterBot()
     
     while True:
-        LOG.info('----------------\n----------------\n----------------') 
+        LOG.info(
+            '----------------\n\t\t\t\t\t\t\t  ' \
+            '----starting----\n\t\t\t\t\t\t\t  ' \
+            '----------------'
+        )
 
-        twitter_api = get_twitter_api()
+        bot.authorize()
         
         if len(sys.argv) > 1:
             # If we are testing the app
             if sys.argv[1] == 'test':
                 LOG.info('Deleting all tweets')
-                delete_all_tweets(twitter_api)
+                bot.delete_all_tweets()
                 LOG.info('Tweeting test tweets')
-                tweet_test_tweets(twitter_api)
+                bot.tweet_test_tweets()
+                exit()
             # If we just wanted to delete all tweets
             elif sys.argv[1] == 'clear':
                 LOG.info('Deleting all tweets')
-                delete_all_tweets(twitter_api)
+                bot.delete_all_tweets()
                 LOG.info('exiting...')
                 exit()
     
         # Retrieve all mentions tweeted after the last seen tweet id
         LOG.info('Polling mentions')
-        mentions = twitter_api.mentions_timeline(int(_os.environ['LAST_SEEN_ID']))
+        mentions = bot.get_new_mentions()
         LOG.info(f'Found {len(mentions)} new mentions')
         
         # Respond to mentions from newest to oldest
@@ -57,7 +61,7 @@ def main():
             LOG.info(f'Returned media_info:{media_info}')
 
             # Respond to the mention
-            reply_to_tweet(twitter_api, help_message, media_info, mention._json['id'])
+            bot.reply_to_mention(help_message, media_info, mention._json['id'])
 
             # Delete the saved picture if necessary
             picture_file_path = media_info['picture_file_path']
@@ -68,13 +72,12 @@ def main():
                 except Exception as err:
                     LOG.error(f'Failed to delete pictured at {picture_file_path}')
                     LOG.error(str(err))
-
-        if len(mentions) > 0:
-            update_heroku_env_variable(TOKEN, 'LAST_SEEN_ID', mentions[-1]._json['id'])
+            
+            update_heroku_env_variable('LAST_SEEN_ID', mention._json['id'])
 
         LOG.info(' ')
         LOG.info('exiting...')
-
+        
         # Wait 1 minute until next script execution
         time.sleep(60)
 

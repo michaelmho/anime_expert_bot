@@ -1,6 +1,6 @@
 import requests
 
-from constants import LOG
+from constants import LOG, TOKEN
 
 # Not currently in use
 def get_last_seen_id(file_name):
@@ -27,23 +27,24 @@ def set_last_seen_id(last_seen_id, file_name):
     return
 
 
-def update_heroku_env_variable(token, variable_name, value):
+def update_heroku_env_variable(key, value):
     LOG.info(' ')
-    LOG.info(f'Updating {variable_name}')
     try:
-        # Update {variable_name} env variable through the heroku api
-        body = {f'{variable_name}':f'{value}'}
+        # Update {key} env variable through the heroku api
+        body = {f'{key}':f'{value}'}
         url = 'https://api.heroku.com/apps/anime-expert-bot/config-vars'
-        head = {'Accept':'application/vnd.heroku+json; version=3', 'Authorization':f'Bearer {token}'}
+        head = {'Accept':'application/vnd.heroku+json; version=3', 'Authorization':f'Bearer {TOKEN}'}
         response = requests.patch(url, headers=head, data=body)
         response.raise_for_status()
 
-        # Validate {variable_name} was updated
-        if value != (response.json())[f'{variable_name}']:
-            raise requests.exceptions.RequestException(f'API failed to update {variable_name}')
+        # Validate {key} was updated
+        if value != (response.json())[f'{key}']:
+            raise requests.exceptions.RequestException(f'API failed to update {key}')
     except requests.exceptions.RequestException as err:
-        LOG.error(f'Could not update {variable_name}')
+        LOG.error(f'Could not update {key}')
         LOG.error(str(err))
+        exit()
     except KeyError as err:
-        LOG.error(f'Could not update {variable_name}')
+        LOG.error(f'Could not update {key}')
         LOG.error(str(err))
+        exit()
