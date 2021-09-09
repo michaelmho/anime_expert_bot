@@ -74,7 +74,6 @@ def main():
             update_heroku_env_variable('LAST_SEEN_ID', mention_id)
 
         LOG.info('exiting...')
-
         time.sleep(60)
 
 

@@ -17,7 +17,7 @@ class TwitterBot():
         except Exception as err:
             LOG.error(f'Could not connect to the twitter api')
             LOG.error(f'{str(err)}')
-            LOG.info('exiting...')
+            LOG.error('exiting...')
             exit()
 
     
