@@ -1,6 +1,6 @@
 import re
 
-from constants import GENRES, MEDIA_STATUSES, MEDIA_TYPES
+from constants import GENRES, MEDIA_STATUSES, MEDIA_TYPES, LOG
 
 class MentionAnalyzer():
     def __init__(self):
@@ -25,6 +25,7 @@ class MentionAnalyzer():
 
     
     def analyze(self, mention_text):
+        LOG.info(f'> Analyzing "{mention_text}"')
         self.parse_mention(mention_text)
 
         if len(self.arguments) == 0:
@@ -44,6 +45,8 @@ class MentionAnalyzer():
 
         self.reset()
 
+        LOG.info(f'help_message: \'{results[0]}\'')
+        LOG.info(f'search_criteria: {results[1]}')
         return results
 
 
@@ -129,7 +132,7 @@ class MentionAnalyzer():
             if len(self.arguments) > 1:
                 self.query = ' '.join(self.arguments[1:])
             else:
-                self.help_message = 'It\'s empty'
+                self.help_message = 'There\'s nothing after "like"'
         elif self.arguments[1] == 'like':
             if self.arguments[0] in MEDIA_TYPES:
                 self.media_type = self.arguments[0]

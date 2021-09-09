@@ -31,6 +31,8 @@ class SuggestionRetriever:
     
 
     def get_suggestion(self, search_criteria):
+        LOG.info(f'> Retrieving suggestion')
+
         self.query = search_criteria['query']
         self.genre_ids = search_criteria['genre_ids']
         self.is_classic = search_criteria['is_classic']
@@ -48,14 +50,11 @@ class SuggestionRetriever:
         if self.plot and self.title:
             self.save_media_picture()
 
-        results = {
-            'plot' : self.plot,
-            'title' : self.title,
-            'picture_file_path' : self.picture_file_path
-        }
+        results = {'title' : self.title, 'picture_file_path' : self.picture_file_path, 'plot' : self.plot}
 
         self.reset()
 
+        LOG.info(f'media_info: {results}')
         return results
 
 

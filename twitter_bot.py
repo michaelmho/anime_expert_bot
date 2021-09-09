@@ -59,6 +59,7 @@ class TwitterBot():
 
 
     def delete_all_tweets(self):
+        LOG.info('Deleting all tweets')
         for status in tweepy.Cursor(self.api.user_timeline).items():
             try:
                 self.api.destroy_status(status.id)
@@ -69,6 +70,7 @@ class TwitterBot():
 
 
     def tweet_test_tweets(self):
+        LOG.info('Tweeting test tweets')
         tweets = [
             '@AnimeExpertBot police',
             '@AnimeExpertBot anime manga',
