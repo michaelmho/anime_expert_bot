@@ -10,6 +10,7 @@ from constants import MEDIA_STATUSES, LOG
 
 class SuggestionRetriever:
     def __init__(self):
+        self.api_url = 'https://api.jikan.moe/v3'
         self.reset()
 
 
@@ -38,14 +39,12 @@ class SuggestionRetriever:
         self.is_classic = search_criteria['is_classic']
         self.is_current = search_criteria['is_current']
         self.media_type = search_criteria['media_type']
-        
-        base_url = f'https://api.jikan.moe/v3/search/{self.media_type}?page=1'
 
         # If this is a request with like
         if self.query:
-            self.get_similar_media(base_url)
+            self.get_similar_media()
         else:
-            self.get_media_with_genre(base_url)
+            self.get_media_with_genre()
 
         if self.plot and self.title:
             self.save_media_picture()
@@ -86,29 +85,29 @@ class SuggestionRetriever:
         return results
 
 
-    def get_similar_media(self, base_url):
+    def get_similar_media(self):
         # Form url to search for {self.media_type} with name like {self.query}
         encoded_query = urllib.parse.quote(self.query)
-        url = base_url + f'&q={encoded_query}'
+        url = f'{self.api_url}/search/{self.media_type}?page=1&q={encoded_query}'
 
         # Make the search request
         returned_media = self.mal_api_request(url, 'results')
         
         if returned_media:
             # Select the first returned media since it's the closest match
-            self.media_id = returned_media[0]['mal_id']
+            media_id = returned_media[0]['mal_id']
 
             # Make a request for recommendations similar to the selected media
-            url = f'https://api.jikan.moe/v3/{self.media_type}/{self.media_id}/recommendations'
+            url = f'{self.api_url}/{self.media_type}/{media_id}/recommendations'
             returned_recommendations = self.mal_api_request(url, 'recommendations')
             
             if returned_recommendations:
-                # Select a random recommendation
+                # Select a random recommended media
                 reccomendation_index = randrange(len(returned_recommendations))
                 self.media_id = returned_recommendations[reccomendation_index]['mal_id']
 
                 # Make a request for details on the selected media        
-                url = f'https://api.jikan.moe/v3/{self.media_type}/{self.media_id}'
+                url = f'{self.api_url}/{self.media_type}/{self.media_id}'
                 returned_media_details = self.mal_api_request(url, '')
                 
                 if returned_media_details:
@@ -120,13 +119,13 @@ class SuggestionRetriever:
                         LOG.error(f'Response missing key \"{str(err)}\"')
 
 
-    def get_media_with_genre(self, base_url):
+    def get_media_with_genre(self):
         # Form url to search for the top {limit} media with the requested genre(s)
         limit = 50
         genre = f'&genre={self.genre_ids}' if self.genre_ids else ''
         status = f'&status={MEDIA_STATUSES[self.media_type]}' if self.is_current else ''
         start_end = f'&start_date=1988-00-00&end_date=1998-00-00' if self.is_classic else ''
-        url = base_url + f'{status}{genre}{start_end}&limit={limit}&order_by=score'
+        url = f'{self.api_url}/search/{self.media_type}?page=1{status}{genre}{start_end}&limit={limit}&order_by=score'
 
         # Make the search request
         returned_media = self.mal_api_request(url, 'results')
@@ -147,7 +146,7 @@ class SuggestionRetriever:
 
     def save_media_picture(self):
         # Request picture urls for the selected media
-        url = f'https://api.jikan.moe/v3/{self.media_type}/{self.media_id}/pictures'
+        url = f'{self.api_url}/{self.media_type}/{self.media_id}/pictures'
         returned_picture_urls = self.mal_api_request(url, 'pictures')
         
         if returned_picture_urls:
@@ -178,3 +177,4 @@ class SuggestionRetriever:
             except HTTPError as err:
                 self.picture_file_path = ''
                 LOG.error(f'Received status code {err.code} from "{selected_picture_url}"')
+

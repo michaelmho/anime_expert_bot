@@ -28,9 +28,9 @@ def set_last_seen_id(last_seen_id, file_name):
 
 
 def update_heroku_env_variable(key, value):
-    LOG.info(' ')
     try:
         # Update {key} env variable through the heroku api
+        LOG.info(f'> Attempting to update heroku env variable \'{key}\' with value \'{value}\'')
         body = {f'{key}':f'{value}'}
         url = 'https://api.heroku.com/apps/anime-expert-bot/config-vars'
         head = {'Accept':'application/vnd.heroku+json; version=3', 'Authorization':f'Bearer {TOKEN}'}
@@ -38,13 +38,16 @@ def update_heroku_env_variable(key, value):
         response.raise_for_status()
 
         # Validate {key} was updated
-        if value != (response.json())[f'{key}']:
-            raise requests.exceptions.RequestException(f'API failed to update {key}')
+        returned_value = (response.json())[f'{key}']
+        if value != returned_value:
+            raise requests.exceptions.RequestException(f'{key} is set to \'{returned_value}\'. Expexted \'{value}\'')
+
+        LOG.info(f'Successful\n')
     except requests.exceptions.RequestException as err:
-        LOG.error(f'Could not update {key}')
+        LOG.error(f'Failure')
         LOG.error(str(err))
         exit()
     except KeyError as err:
-        LOG.error(f'Could not update {key}')
+        LOG.error(f'Failure')
         LOG.error(str(err))
         exit()

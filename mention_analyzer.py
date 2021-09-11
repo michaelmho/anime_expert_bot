@@ -4,6 +4,7 @@ from constants import GENRES, MEDIA_STATUSES, MEDIA_TYPES, LOG
 
 class MentionAnalyzer():
     def __init__(self):
+        self.validators = [self.validate_classic, self.validate_current, self.validate_genre, self.validate_media_type]
         self.reset()
 
     def reset(self):
@@ -147,11 +148,9 @@ class MentionAnalyzer():
 
 
     def analyze_mention(self):
-        validators = [self.validate_classic, self.validate_current, self.validate_genre, self.validate_media_type]
-
         for argument in self.arguments:
             valid_argument = False
-            for validator in validators:
+            for validator in self.validators:
                 valid_argument = validator(argument)
                 if valid_argument:
                     break

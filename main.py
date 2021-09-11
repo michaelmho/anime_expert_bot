@@ -65,9 +65,9 @@ def main():
             if picture_file_path:
                 try:
                     os.remove(picture_file_path)
-                    LOG.info(f'> Deleted picture at {picture_file_path}\n')
+                    LOG.info(f'> Deleted picture at {picture_file_path}')
                 except Exception as err:
-                    LOG.error(f'> Failed to delete pictured at {picture_file_path}\n')
+                    LOG.error(f'> Failed to delete pictured at {picture_file_path}')
                     LOG.error(str(err))
             
             # Update last seen id
